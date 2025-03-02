@@ -1,0 +1,27 @@
+@startuml "NPU Platform - System Context"
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+' Use C4 styling
+LAYOUT_WITH_LEGEND()
+
+title System Context diagram for NPU Platform
+
+Person(users, "Fans", "Upload NPUs, browse/search, and rate creations")
+
+System_Ext(mobileApp, "Mobile Application", "Native mobile app for iOS and Android")
+System_Ext(webApp, "Web Application", "Web app accessible via browsers")
+
+System(npuPlatform, "NPU Platform Backend", "Enables sharing and discovery of Nice Part Usage (NPU) creations")
+
+System_Ext(productDataApi, "Product Data API", "Provides official product data")
+System_Ext(identityProvider, "Identity Provider", "Handles user authentication")
+
+Rel(users, mobileApp, "Uses")
+Rel(users, webApp, "Uses")
+Rel(mobileApp, npuPlatform, "Makes API calls to")
+Rel(webApp, npuPlatform, "Makes API calls to")
+Rel(npuPlatform, productDataApi, "Gets product data from")
+Rel(npuPlatform, identityProvider, "Authenticates users via")
+
+@enduml

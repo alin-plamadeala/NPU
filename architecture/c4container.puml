@@ -1,0 +1,72 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' Use C4 styling
+LAYOUT_WITH_LEGEND()
+
+title Container diagram for NPU Platform
+
+Person(users, "Fans", "Upload NPUs, browse/search, and rate creations")
+
+System_Ext(mobileApp, "Mobile Application", "Native mobile app for iOS and Android")
+System_Ext(webApp, "Web Application", "Web app accessible via browsers")
+
+System_Boundary(npuPlatform, "NPU Platform - AWS Cloud") {
+    Container(apiGateway, "API Gateway", "AWS API Gateway", "Entry point for all client requests, handles routing and rate limiting")
+
+    ' Core Services Group
+    Boundary(coreServices, "Core Services") {
+        Container(authService, "Auth Service", "AWS Lambda", "Manages user authentication and authorization")
+        Container(npuService, "NPU Service", "AWS Lambda", "Core business logic for NPU creations")
+
+        Container(ratingService, "Rating Service", "AWS Lambda", "Handles scoring of NPU creations")
+        Container(npuDiscoveryService, "Discovery Service", "AWS Lambda", "Discovery and Searching of NPU creations")
+        Container(mediaService, "Media Service", "AWS Lambda", "Handles image uploads and processing")
+    }
+
+    ' Data Services Group
+    Boundary(dataServices, "Data Services") {
+        Container(catalogService, "Catalog Service", "AWS Lambda", "Interfaces with Product Data API")
+        Container(rdsProxy, "RDS Proxy", "Amazon RDS Proxy", "Manages database connections")
+
+        ContainerDb(mainDb, "Main Database", "Amazon RDS (PostgreSQL)", "Stores user profiles, NPU metadata, relationships, and provides full-text search capabilities")
+
+        ContainerDb(objectStorage, "Object Storage", "Amazon S3", "Stores NPU images and other media")
+        Container(cdn, "Content Delivery", "Amazon CloudFront", "Distributes media content globally with low latency")
+    }
+}
+
+' External systems at the bottom
+System_Ext(productDataApi, "Product Data API", "Provides official product data")
+System_Ext(identityProvider, "Identity Provider", "Handles user authentication")
+
+' User interactions
+Rel(users, mobileApp, "Uses")
+Rel(users, webApp, "Uses")
+
+' Client to backend communication
+Rel(mobileApp, apiGateway, "Makes API calls to", "HTTPS")
+Rel(webApp, apiGateway, "Makes API calls to", "HTTPS")
+Rel(mobileApp, cdn, "Fetches media from", "HTTPS")
+Rel(webApp, cdn, "Fetches media from", "HTTPS")
+
+' API Gateway routing
+Rel(apiGateway, authService, "Routes auth requests to")
+Rel(apiGateway, npuService, "Routes NPU requests to")
+Rel(apiGateway, ratingService, "Routes rating requests to")
+Rel(apiGateway, npuDiscoveryService, "Routes search & discovery requests to")
+Rel(apiGateway, mediaService, "Routes media requests to")
+
+' Core service connections
+Rel(authService, identityProvider, "Authenticates via", "HTTPS")
+Rel(npuService, rdsProxy, "Reads from and writes to")
+Rel(ratingService, rdsProxy, "Reads from and writes to")
+Rel(npuDiscoveryService, rdsProxy, "Queries using PostgreSQL + Full-text search")
+Rel(npuService, catalogService, "Gets part information from")
+Rel(mediaService, objectStorage, "Stores images in")
+
+' Data service connections
+Rel(catalogService, productDataApi, "Gets product data from", "HTTPS")
+Rel(rdsProxy, mainDb, "Manages connections to")
+Rel(objectStorage, cdn, "Origin for")
+@enduml

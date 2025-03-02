@@ -1,0 +1,25 @@
+{
+  "name": "npu-db-schema",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/npu-db-schema/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "generate-migration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/npu-db-schema",
+        "color": true,
+        "command": "drizzle-kit generate"
+      }
+    },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/npu-db-schema",
+        "color": true,
+        "command": "drizzle-kit migrate"
+      }
+    }
+  }
+}

@@ -1,0 +1,179 @@
+openapi: 3.0.3
+info:
+  title: NPU Service API
+  description: API for managing NPU creations
+  version: 1.0.0
+
+paths:
+  /npus:
+    post:
+      summary: Create a new NPU
+      operationId: createNpu
+      tags:
+        - NPU
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNpuRequest"
+      responses:
+        "201":
+          description: Successfully created an NPU
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NpuResponse"
+
+  /npus/{id}:
+    get:
+      summary: Get an NPU by ID
+      operationId: getNpuById
+      tags:
+        - NPU
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Returns the NPU details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NpuResponse"
+        "404":
+          description: NPU not found
+
+    put:
+      summary: Update an existing NPU
+      operationId: updateNpu
+      tags:
+        - NPU
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateNpuRequest"
+      responses:
+        "200":
+          description: Successfully updated NPU
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NpuResponse"
+        "404":
+          description: NPU not found
+
+    delete:
+      summary: Delete an NPU by ID
+      operationId: deleteNpu
+      tags:
+        - NPU
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: NPU deleted successfully
+        "404":
+          description: NPU not found
+
+components:
+  schemas:
+    CreateNpuRequest:
+      type: object
+      required: [ title, description, products, images ]
+      properties:
+        title:
+          type: string
+          description: Title of the NPU
+        description:
+          type: string
+          description: Detailed description of the NPU
+        products:
+          type: array
+          items:
+            type: string
+          description: List of product IDs associated with the NPU
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/NpuImage"
+          description: List of images for the NPU (one can be main)
+
+    UpdateNpuRequest:
+      type: object
+      required: [ ]
+      properties:
+        title:
+          type: string
+          description: Updated title of the NPU
+        description:
+          type: string
+          description: Updated description of the NPU
+        products:
+          type: array
+          items:
+            type: string
+          description: List of product IDs associated with the NPU
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/NpuImage"
+          description: Updated list of images
+
+    NpuResponse:
+      type: object
+      required: [ id, userId, title, description, products, images, createdAt, updatedAt ]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the NPU
+        userId:
+          type: string
+          format: uuid
+          description: ID of the user who created the NPU
+        title:
+          type: string
+          description: Title of the NPU
+        description:
+          type: string
+          description: Detailed description of the NPU
+        products:
+          type: array
+          items:
+            type: string
+          description: List of product IDs associated with the NPU
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/NpuImage"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    NpuImage:
+      type: object
+      required: [ url, isMain ]
+      properties:
+        url:
+          type: string
+          format: uri
+        isMain:
+          type: boolean

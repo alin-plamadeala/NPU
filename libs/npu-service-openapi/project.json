@@ -1,0 +1,27 @@
+{
+  "name": "npu-service-openapi",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/npu-service-openapi/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/npu-service-openapi",
+        "tsConfig": "libs/npu-service-openapi/tsconfig.lib.json",
+        "packageJson": "libs/npu-service-openapi/package.json",
+        "main": "libs/npu-service-openapi/src/index.ts",
+        "assets": ["libs/npu-service-openapi/*.md"]
+      }
+    },
+    "generate-types": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/npu-service-openapi",
+        "command": "npx openapi-typescript openapi.yml -o ./src/lib/generated.ts"
+      }
+    }
+  }
+}

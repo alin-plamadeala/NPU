@@ -1,0 +1,1 @@
+ALTER TABLE "npu_creations" ALTER COLUMN "avg_rating" SET DATA TYPE numeric(5, 2);

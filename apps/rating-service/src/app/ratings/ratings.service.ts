@@ -1,6 +1,6 @@
 import {Inject, Injectable, NotFoundException} from '@nestjs/common';
 import {NPU_DB, NpuDb} from "@npu/npu-db";
-import {ratings} from "@npu/db-schema";
+import {npuCreations, ratings} from "@npu/db-schema";
 
 import {
   CreateRatingRequestBody,
@@ -8,7 +8,8 @@ import {
   RatingResponse,
   ListRatingsResponse, ListRatingsQueryParams
 } from '@npu/rating-service-openapi';
-import {and, eq, gte, isNull, lte} from "drizzle-orm";
+import {and, eq, gte, isNull, lte, sql} from "drizzle-orm";
+import {Cron, CronExpression} from "@nestjs/schedule";
 
 @Injectable()
 export class RatingsService {
@@ -102,11 +103,20 @@ export class RatingsService {
       offset,
     });
 
+    const countResult = await this.db
+      .select({count: sql<number>`count(*)`})
+      .from(ratings)
+      .where(and(...filters)
+      )
+      .execute();
+
+    const totalItems = countResult[0]?.count || 0;
+
     return {
       pagination: {
         limit,
         offset,
-        total: res.length,
+        total: Number(totalItems),
       },
       data: res.map(rating => ({
         id: rating.id,
@@ -126,5 +136,16 @@ export class RatingsService {
     }).where(and(eq(ratings.id, id)))
 
     return {message: "Rating deleted successfully"};
+  }
+
+
+  // NOTE: In reality this should be a separate lambda handler triggered by EventBridge Schedule
+  @Cron(CronExpression.EVERY_HOUR)
+  async calculateAverageRatings() {
+    await this.db.update(npuCreations).set({
+      avgRating: sql`(SELECT AVG(score) FROM ${ratings} WHERE ${ratings.npuId} = ${npuCreations.id} AND ${ratings.deletedAt} IS NULL)`
+    });
+
+    return {message: "Average ratings calculated successfully"};
   }
 }

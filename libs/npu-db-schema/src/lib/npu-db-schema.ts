@@ -1,4 +1,4 @@
-import {pgTable, serial, text, integer, timestamp, uuid, varchar, boolean} from "drizzle-orm/pg-core";
+import {pgTable, serial, text, integer, timestamp, uuid, varchar, boolean, decimal, numeric} from "drizzle-orm/pg-core";
 import {relations} from 'drizzle-orm';
 
 export const users = pgTable("users", {
@@ -13,6 +13,7 @@ export const npuCreations = pgTable("npu_creations", {
     userId: varchar("user_id").notNull().references(() => users.externalId),
     title: varchar("title", {length: 100}).notNull(),
     description: text("description").notNull(),
+    avgRating: numeric("avg_rating", {precision: 5, scale: 2}),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     deletedAt: timestamp("deleted_at"),

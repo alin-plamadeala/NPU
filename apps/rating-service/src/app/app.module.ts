@@ -1,11 +1,11 @@
 import {Module} from '@nestjs/common';
 import {RatingsModule} from './ratings/ratings.module';
-import {RatingsService} from './ratings/ratings.service';
-import {RatingsController} from './ratings/ratings.controller';
 import {NpuDbModule} from "@npu/npu-db";
+import {ScheduleModule} from "@nestjs/schedule";
 
 @Module({
-  imports: [RatingsModule, NpuDbModule],
+  imports: [RatingsModule, NpuDbModule, ScheduleModule.forRoot(),
+  ],
   controllers: [],
   providers: [],
 })

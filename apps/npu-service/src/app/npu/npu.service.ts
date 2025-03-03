@@ -50,12 +50,11 @@ export class NpuService {
 
     async updateNpu(id: string, dto: UpdateNpuRequestBody): Promise<NpuResponse | null> {
         await this.db.transaction(async (trx) => {
-            if (dto.title || dto.description) {
-                await trx.update(npuCreations).set({
-                    title: dto.title,
-                    description: dto.description,
-                }).where(and(eq(npuCreations.id, id), isNull(npuCreations.deletedAt)));
-            }
+            await trx.update(npuCreations).set({
+                title: dto.title,
+                description: dto.description,
+                updatedAt: new Date(),
+            }).where(and(eq(npuCreations.id, id), isNull(npuCreations.deletedAt)));
 
             if (dto.images) {
                 await trx.delete(npuImages).where(eq(npuImages.npuId, id));

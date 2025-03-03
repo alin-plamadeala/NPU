@@ -13,8 +13,8 @@ export const npuCreations = pgTable("npu_creations", {
     userId: varchar("user_id").notNull().references(() => users.externalId),
     title: varchar("title", {length: 100}).notNull(),
     description: text("description").notNull(),
-    updatedAt: timestamp("updated_at").defaultNow(),
-    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     deletedAt: timestamp("deleted_at"),
 });
 
@@ -22,7 +22,7 @@ export const npuImages = pgTable("npu_images", {
     id: serial("id").primaryKey(),
     npuId: uuid("npu_id").notNull().references(() => npuCreations.id),
     imageUrl: text("image_url").notNull(),
-    isMain: boolean("is_main").default(false),
+    isMain: boolean("is_main").default(false).notNull(),
 });
 
 
@@ -32,8 +32,8 @@ export const ratings = pgTable("ratings", {
     userId: varchar("user_id").notNull().references(() => users.externalId),
     score: integer("score").notNull().default(0),
     comment: text("comment"),
-    updatedAt: timestamp("updated_at").defaultNow(),
-    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     deletedAt: timestamp("deleted_at"),
 });
 

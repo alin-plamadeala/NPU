@@ -11,7 +11,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** List ratings */
+        get: operations["listRatings"];
         put?: never;
         /** Submit a rating for an NPU */
         post: operations["createRating"];
@@ -53,7 +54,7 @@ export interface components {
             /** @description Score given to the NPU (1-10 scale) */
             score: number;
             /** @description Free-text feedback from the user */
-            comment: string;
+            comment?: string;
         };
         UpdateRatingRequest: {
             /** @description Updated score (1-10 scale) */
@@ -62,11 +63,8 @@ export interface components {
             comment?: string;
         };
         RatingResponse: {
-            /**
-             * Format: uuid
-             * @description Unique identifier of the rating
-             */
-            id: string;
+            /** @description Unique identifier of the rating */
+            id: number;
             /**
              * Format: uuid
              * @description ID of the NPU being rated
@@ -80,7 +78,7 @@ export interface components {
             /** @description Score given to the NPU */
             score: number;
             /** @description Free-text feedback */
-            comment: string;
+            comment?: string;
             /**
              * Format: date-time
              * @description Timestamp of when the rating was submitted
@@ -92,6 +90,17 @@ export interface components {
              */
             updatedAt: string;
         };
+        ListRatingsResponse: {
+            pagination: {
+                /** @description Total number of ratings */
+                total: number;
+                /** @description Maximum number of ratings returned */
+                limit: number;
+                /** @description Number of ratings to skip */
+                offset: number;
+            };
+            data: components["schemas"]["RatingResponse"][];
+        };
     };
     responses: never;
     parameters: never;
@@ -101,6 +110,43 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    listRatings: {
+        parameters: {
+            query?: {
+                /** @description Maximum number of ratings to return */
+                limit?: number;
+                /** @description Number of ratings to skip */
+                offset?: number;
+                /** @description ID of the NPU to filter ratings by */
+                npuId?: string;
+                /** @description ID of the user to filter ratings by */
+                userId?: string;
+                /** @description Score to filter ratings by */
+                scoreGte?: number;
+                /** @description Score to filter ratings by */
+                scoreLte?: number;
+                /** @description Minimum creation date of the rating */
+                createdAtGte?: string;
+                /** @description Maximum creation date of the rating */
+                createdAtLte?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns all ratings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RatingResponse"][];
+                };
+            };
+        };
+    };
     createRating: {
         parameters: {
             query?: never;
@@ -130,7 +176,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -142,7 +188,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RatingResponse"];
+                    "application/json": components["schemas"]["ListRatingsResponse"];
                 };
             };
             /** @description Rating not found */
@@ -186,7 +232,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };

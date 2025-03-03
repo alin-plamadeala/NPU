@@ -1,0 +1,45 @@
+POST http://localhost:3001/api/v1/ratings
+Content-Type: application/json
+
+{
+  "npuId": "6d7be5c0-274b-47e5-87c0-f3fb5ba4d47c",
+  "score": 1,
+  "comment": "Test comment"
+}
+
+###
+POST http://localhost:3001/api/v1/ratings
+Content-Type: application/json
+
+{
+"npuId": "b4d63d02-c0f2-435a-8704-fd39cca7050b",
+"score": 2,
+"comment": "Test comment"
+}
+
+###
+PUT http://localhost:3001/api/v1/ratings/2
+Content-Type: application/json
+
+{
+  "score": 10,
+  "comment": "Updated comment"
+}
+
+###
+PUT http://localhost:3001/api/v1/ratings/1
+Content-Type: application/json
+
+{
+  "score": 10,
+  "comment": "Updated comment"
+}
+
+
+###
+DELETE http://localhost:3001/api/v1/ratings/2
+
+
+###
+GET http://localhost:3001/api/v1/ratings?scoreLte=5
+

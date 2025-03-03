@@ -25,6 +25,72 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RatingResponse"
+    get:
+      summary: List ratings
+      operationId: listRatings
+      tags:
+        - Rating
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Maximum number of ratings to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+          description: Number of ratings to skip
+        - name: npuId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: ID of the NPU to filter ratings by
+        - name: userId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: ID of the user to filter ratings by
+        - name: scoreGte
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+          description: Score to filter ratings by
+        - name: scoreLte
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+          description: Score to filter ratings by
+        - name: createdAtGte
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Minimum creation date of the rating
+        - name: createdAtLte
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Maximum creation date of the rating
+      responses:
+        "200":
+          description: Returns all ratings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RatingResponse"
 
   /ratings/{id}:
     get:
@@ -37,14 +103,14 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            type: number
       responses:
         "200":
           description: Returns the rating details
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RatingResponse"
+                $ref: "#/components/schemas/ListRatingsResponse"
         "404":
           description: Rating not found
 
@@ -58,7 +124,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            type: number
       requestBody:
         required: true
         content:
@@ -96,7 +162,7 @@ components:
   schemas:
     CreateRatingRequest:
       type: object
-      required: [ npuId, score, comment ]
+      required: [ npuId, score ]
       properties:
         npuId:
           type: string
@@ -125,11 +191,10 @@ components:
 
     RatingResponse:
       type: object
-      required: [ id, npuId, userId, score, comment, createdAt, updatedAt ]
+      required: [ id, npuId, userId, score, createdAt, updatedAt ]
       properties:
         id:
-          type: string
-          format: uuid
+          type: number
           description: Unique identifier of the rating
         npuId:
           type: string
@@ -155,3 +220,25 @@ components:
           type: string
           format: date-time
           description: Timestamp of when the rating was last updated
+    ListRatingsResponse:
+      type: object
+      required: [ pagination, data ]
+      properties:
+        pagination:
+          type: object
+          required: [ total, limit, offset ]
+          properties:
+            total:
+              type: number
+              description: Total number of ratings
+            limit:
+              type: number
+              description: Maximum number of ratings returned
+            offset:
+              type: number
+              description: Number of ratings to skip
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RatingResponse"
+

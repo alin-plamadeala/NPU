@@ -1,0 +1,2 @@
+GET http://localhost:3002/api/v1/npu-search?sort=highest-rated
+Content-Type: application/json

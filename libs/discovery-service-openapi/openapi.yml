@@ -1,0 +1,160 @@
+openapi: 3.0.3
+info:
+  title: NPU Platform Discovery Service
+  description: API for searching and discovering Nice Part Usage (NPU) creations
+  version: '1.0.0'
+  contact:
+    name: NPU Platform Team
+
+
+paths:
+  /npus/search:
+    get:
+      summary: Search for NPUs
+      description: Search for NPUs based on various criteria
+      operationId: searchNpus
+      tags:
+        - discovery
+      parameters:
+        - name: q
+          in: query
+          description: Free text search across title and description
+          schema:
+            type: string
+        - name: productId
+          in: query
+          description: Filter by product ID
+          schema:
+            type: string
+        - name: productName
+          in: query
+          description: Filter by product name
+          schema:
+            type: string
+        - name: ratingGte
+          in: query
+          description: Average rating greater than or equal to
+          schema:
+            type: number
+            minimum: 1
+            maximum: 10
+        - name: sort
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [ newest, oldest, highest-rated, lowest-rated, query-relevance ]
+            default: newest
+        - name: offset
+          in: query
+          description: Offset for pagination
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: limit
+          in: query
+          description: Number of results per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NpuListResponse'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    NpuResponse:
+      type: object
+      required: [ id, userId, title, description, products, images, createdAt, updatedAt ]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the NPU
+        userId:
+          type: string
+          format: uuid
+          description: ID of the user who created the NPU
+        title:
+          type: string
+          description: Title of the NPU
+        description:
+          type: string
+          description: Detailed description of the NPU
+        products:
+          type: array
+          items:
+            type: string
+          description: List of product IDs associated with the NPU
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/NpuImage"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    NpuImage:
+      type: object
+      required: [ url, isMain ]
+      properties:
+        url:
+          type: string
+          format: uri
+        isMain:
+          type: boolean
+    NpuListResponse:
+      type: object
+      required: [ pagination, data ]
+      properties:
+        pagination:
+          type: object
+          required: [ total, limit, offset ]
+          properties:
+            total:
+              type: number
+              description: Total number of ratings
+            limit:
+              type: number
+              description: Maximum number of ratings returned
+            offset:
+              type: number
+              description: Number of ratings to skip
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/NpuResponse"
+
+    ErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+        message:
+          type: string
+          description: Error message
+        errors:
+          type: array
+          items:
+            type: string
+          description: Detailed error messages

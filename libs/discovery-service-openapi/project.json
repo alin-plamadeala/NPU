@@ -1,0 +1,27 @@
+{
+  "name": "discovery-service-openapi",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/discovery-service-openapi/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/discovery-service-openapi",
+        "tsConfig": "libs/discovery-service-openapi/tsconfig.lib.json",
+        "packageJson": "libs/discovery-service-openapi/package.json",
+        "main": "libs/discovery-service-openapi/src/index.ts",
+        "assets": ["libs/discovery-service-openapi/*.md"]
+      }
+    },
+    "generate-types": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/discovery-service-openapi",
+        "command": "npx openapi-typescript openapi.yml -o ./src/lib/generated.ts"
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "rating-service-openapi",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/rating-service-openapi/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/rating-service-openapi",
+        "tsConfig": "libs/rating-service-openapi/tsconfig.lib.json",
+        "packageJson": "libs/rating-service-openapi/package.json",
+        "main": "libs/rating-service-openapi/src/index.ts",
+        "assets": ["libs/rating-service-openapi/*.md"]
+      }
+    },
+    "generate-types": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/rating-service-openapi",
+        "command": "npx openapi-typescript openapi.yml -o ./src/lib/generated.ts"
+      }
+    }
+  }
+}

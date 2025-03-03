@@ -17,7 +17,10 @@
     "paths": {
       "@npu/db-schema": ["libs/npu-db-schema/src/index.ts"],
       "@npu/npu-db": ["libs/npu-db/src/index.ts"],
-      "@npu/npu-service-openapi": ["libs/npu-service-openapi/src/index.ts"]
+      "@npu/npu-service-openapi": ["libs/npu-service-openapi/src/index.ts"],
+      "@npu/rating-service-openapi": [
+        "libs/rating-service-openapi/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

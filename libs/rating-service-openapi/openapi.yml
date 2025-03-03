@@ -1,0 +1,157 @@
+openapi: 3.0.3
+info:
+  title: NPU Rating API
+  description: API for rating NPU creations
+  version: 1.0.0
+
+
+paths:
+  /ratings:
+    post:
+      summary: Submit a rating for an NPU
+      operationId: createRating
+      tags:
+        - Rating
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRatingRequest"
+      responses:
+        "201":
+          description: Successfully created a rating
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RatingResponse"
+
+  /ratings/{id}:
+    get:
+      summary: Get a rating by ID
+      operationId: getRatingById
+      tags:
+        - Rating
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Returns the rating details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RatingResponse"
+        "404":
+          description: Rating not found
+
+    patch:
+      summary: Update an existing rating
+      operationId: updateRating
+      tags:
+        - Rating
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRatingRequest"
+      responses:
+        "200":
+          description: Successfully updated the rating
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RatingResponse"
+        "404":
+          description: Rating not found
+
+    delete:
+      summary: Delete a rating by ID
+      operationId: deleteRating
+      tags:
+        - Rating
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Rating deleted successfully
+        "404":
+          description: Rating not found
+
+components:
+  schemas:
+    CreateRatingRequest:
+      type: object
+      required: [ npuId, score, comment ]
+      properties:
+        npuId:
+          type: string
+          format: uuid
+          description: ID of the NPU being rated
+        score:
+          type: integer
+          minimum: 1
+          maximum: 10
+          description: Score given to the NPU (1-10 scale)
+        comment:
+          type: string
+          description: Free-text feedback from the user
+
+    UpdateRatingRequest:
+      type: object
+      properties:
+        score:
+          type: integer
+          minimum: 1
+          maximum: 10
+          description: Updated score (1-10 scale)
+        comment:
+          type: string
+          description: Updated free-text feedback
+
+    RatingResponse:
+      type: object
+      required: [ id, npuId, userId, score, comment, createdAt, updatedAt ]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the rating
+        npuId:
+          type: string
+          format: uuid
+          description: ID of the NPU being rated
+        userId:
+          type: string
+          format: uuid
+          description: ID of the user who submitted the rating
+        score:
+          type: integer
+          minimum: 1
+          maximum: 10
+          description: Score given to the NPU
+        comment:
+          type: string
+          description: Free-text feedback
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp of when the rating was submitted
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp of when the rating was last updated

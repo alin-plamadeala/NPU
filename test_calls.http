@@ -1,0 +1,80 @@
+POST http://localhost:3000/api/v1/npus
+Content-Type: application/json
+
+{
+  "title": "NPU 2",
+  "description": "NPU 2 description",
+  "products": [
+    "123456"
+  ],
+  "images": [
+    {
+      "url": "http://example.com/image.jpg",
+      "isMain": true
+    }
+  ]
+}
+
+
+###
+GET http://localhost:3000/api/v1/npus/d7674235-de55-4453-bd85-5471b9e6dc90
+
+###
+PUT http://localhost:3000/api/v1/npus/d7674235-de55-4453-bd85-5471b9e6dc90
+Content-Type: application/json
+
+{
+  "title": "NPU 11111"
+
+}
+
+###
+PUT http://localhost:3000/api/v1/npus/d7674235-de55-4453-bd85-5471b9e6dc90
+Content-Type: application/json
+
+{
+  "description": "NPU 11111 description"
+}
+
+###
+PUT http://localhost:3000/api/v1/npus/d7674235-de55-4453-bd85-5471b9e6dc90
+Content-Type: application/json
+
+{
+  "products": [
+  ]
+}
+
+###
+PUT http://localhost:3000/api/v1/npus/d7674235-de55-4453-bd85-5471b9e6dc90
+Content-Type: application/json
+
+{
+  "images": [
+    {
+      "url": "http://example.com/image3.jpg",
+      "isMain": true
+    },
+    {
+      "url": "http://example.com/image2.jpg",
+      "isMain": false
+    }
+  ]
+}
+
+###
+PUT http://localhost:3000/api/v1/npus/d7674235-de55-4453-bd85-5471b9e6dc90
+Content-Type: application/json
+
+{
+  "products": [
+    "654321"
+  ]
+}
+
+
+
+###
+DELETE http://localhost:3000/api/v1/npus/d7674235-de55-4453-bd85-5471b9e6dc90
+Content-Type: application/json
+

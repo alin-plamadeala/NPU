@@ -12,7 +12,7 @@ Person(users, "Fans", "Upload NPUs, browse/search, and rate creations")
 System_Ext(mobileApp, "Mobile Application", "Native mobile app for iOS and Android")
 System_Ext(webApp, "Web Application", "Web app accessible via browsers")
 
-System(npuPlatform, "NPU Platform Backend", "Enables sharing and discovery of Nice Part Usage (NPU) creations")
+System(npuPlatform, "NPU Platform Backend", "Enables sharing, discovery and rating of Nice Part Usage (NPU) creations")
 
 System_Ext(productDataApi, "Product Data API", "Provides official product data")
 System_Ext(identityProvider, "Identity Provider", "Handles user authentication")

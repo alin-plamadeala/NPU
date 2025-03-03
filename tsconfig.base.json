@@ -8,7 +8,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "ES2021",
     "module": "esnext",
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
@@ -21,7 +21,15 @@
       "@npu/rating-service-openapi": [
         "libs/rating-service-openapi/src/index.ts"
       ]
-    }
+    },
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
+    "incremental": true,
+    "strictNullChecks": true,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false
   },
   "exclude": ["node_modules", "tmp"]
 }

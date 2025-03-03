@@ -1,4 +1,4 @@
-import {Inject, Injectable, NotFoundException} from "@nestjs/common";
+import {Inject, Injectable} from "@nestjs/common";
 import {npuCreations, npuImages, npuToProducts} from "@npu/db-schema";
 import {and, eq, isNull} from "drizzle-orm";
 import {NPU_DB, NpuDb} from "@npu/npu-db";
@@ -45,10 +45,10 @@ export class NpuService {
         });
 
 
-        return this.getNpuById(res.npuId);
+        return (await this.getNpuById(res.npuId))!;
     }
 
-    async updateNpu(id: string, dto: UpdateNpuRequestBody): Promise<NpuResponse> {
+    async updateNpu(id: string, dto: UpdateNpuRequestBody): Promise<NpuResponse | null> {
         await this.db.transaction(async (trx) => {
             if (dto.title || dto.description) {
                 await trx.update(npuCreations).set({
@@ -123,7 +123,6 @@ export class NpuService {
 
     async deleteNpu(id: string) {
         await this.db.update(npuCreations).set({
-            // @ts-ignore
             deletedAt: new Date(),
         }).where(and(eq(npuCreations.id, id), isNull(npuCreations.deletedAt)));
 

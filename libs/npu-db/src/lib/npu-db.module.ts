@@ -9,7 +9,9 @@ const createDrizzleInstance = async (configService: ConfigService) => {
     connectionString: configService.get<string>("DATABASE_URL"),
   });
 
-  return drizzle(pool, {schema});
+  return drizzle(pool, {
+    schema
+  });
 };
 
 export type NpuDb = Awaited<ReturnType<typeof createDrizzleInstance>>;

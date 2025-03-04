@@ -114,7 +114,7 @@ paths:
         "404":
           description: Rating not found
 
-    patch:
+    put:
       summary: Update an existing rating
       operationId: updateRating
       tags:

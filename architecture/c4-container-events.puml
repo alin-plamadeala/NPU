@@ -1,0 +1,62 @@
+@startuml "NPU Platform - Real-time Events Handling"
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Container diagram for NPU Platform Real-time Events Handling
+
+Person(users, "Fans", "Upload NPUs, receive notifications about new content and ratings")
+
+System_Ext(mobileApp, "Mobile Application", "Native mobile app for iOS and Android")
+System_Ext(webApp, "Web Application", "Web app accessible via browsers")
+
+System_Boundary(npuPlatform, "NPU Platform - AWS Cloud") {
+    Container(wsApiGateway, "API Gateway (WebSocket)", "AWS API Gateway", "Manages WebSocket connections for real-time updates")
+
+    ' Core Services that interact with real-time components
+    Boundary(coreServices, "Core Services") {
+        Container(npuService, "NPU Service", "AWS Lambda", "Core business logic for NPU creations")
+        Container(ratingService, "Rating Service", "AWS Lambda", "Handles scoring of NPU creations")
+    }
+
+    ' Real-time Communication Group - the focus of this diagram
+    Boundary(realtimeCommunication, "Real-time Communication") {
+        Container(notificationService, "Notification Service", "AWS Lambda", "Processes events and sends notifications")
+        Container(snsTopic, "Event Bus", "Amazon EventBridge Event Bus", "Distributes events throughout the system")
+        ContainerDb(connectionStore, "Connection Store", "Amazon DynamoDB", "Tracks active WebSocket connections and subscriptions")
+        Container(connectionManager, "Connection Manager", "AWS Lambda", "Handles WebSocket connects/disconnects")
+        Container(messageDispatcher, "Message Dispatcher", "AWS Lambda", "Sends messages to appropriate connections")
+    }
+
+    ' External push notification services
+    System_Ext(pushNotificationServices, "Push Notification Services", "Mobile push notifications")
+}
+
+' User interactions
+Rel(users, mobileApp, "Uses")
+Rel(users, webApp, "Uses")
+
+' Client to backend communication for real-time
+Rel(mobileApp, wsApiGateway, "Establishes WebSocket connection with", "WSS")
+Rel(webApp, wsApiGateway, "Establishes WebSocket connection with", "WSS")
+
+' WebSocket connection handling
+Rel(wsApiGateway, connectionManager, "Triggers on connect/disconnect", "$connect, $disconnect routes")
+Rel(connectionManager, connectionStore, "Stores/removes connection data")
+
+' Event publishing from core services
+Rel(npuService, snsTopic, "Publishes NPU events to")
+Rel(ratingService, snsTopic, "Publishes rating events to")
+
+' Event processing
+Rel(snsTopic, notificationService, "Triggers with event data")
+Rel(notificationService, connectionStore, "Queries for relevant connections")
+Rel(notificationService, messageDispatcher, "Triggers with notification payload")
+Rel(notificationService, pushNotificationServices, "Sends push notifications via", "HTTPS")
+
+' Message dispatching
+Rel(messageDispatcher, connectionStore, "Reads connection data from")
+Rel(messageDispatcher, wsApiGateway, "Sends messages through", "AWS ApiGatewayManagementApi")
+
+@enduml
